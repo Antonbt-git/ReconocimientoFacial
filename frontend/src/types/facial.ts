@@ -8,3 +8,14 @@ export interface RecognitionResult {
   coincide: boolean;
   det_score: number;
 }
+
+export interface CalibrationPoint {
+  similitud: number;
+  probabilidad: number;
+}
+
+export interface CalibrationCurveResponse {
+  puntos: CalibrationPoint[];
+  umbral: number;
+  modelo_entrenado: boolean;
+}

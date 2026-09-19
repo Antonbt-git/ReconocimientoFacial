@@ -23,6 +23,17 @@ class PredictionResponse(BaseModel):
     modelo_entrenado: bool
 
 
+class CalibrationPointResponse(BaseModel):
+    similitud: float
+    probabilidad: float
+
+
+class CalibrationCurveResponse(BaseModel):
+    puntos: list[CalibrationPointResponse]
+    umbral: float
+    modelo_entrenado: bool
+
+
 class ConfusionMatrix(BaseModel):
     verdaderos_positivos: int
     falsos_positivos: int

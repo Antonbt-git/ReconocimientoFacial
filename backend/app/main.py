@@ -1,12 +1,15 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+import app.models  # noqa: F401 — registra todos los modelos en Base.metadata
 from app.api.routes.health import router as health_router
 from app.api.routes.history import router as history_router
 from app.api.routes.models import router as models_router
 from app.api.routes.personas import router as personas_router
 from app.api.routes.probabilities import router as probabilities_router
 from app.api.routes.recognition import router as recognition_router
+from app.core.config import settings
+from app.database.connection import Base, engine
 
 
 app = FastAPI(
@@ -16,12 +19,17 @@ app = FastAPI(
 )
 
 
+@app.on_event("startup")
+def crear_tablas():
+    # Crea las tablas que falten en la base de datos al arrancar.
+    # No borra ni modifica tablas existentes: solo agrega las que no
+    # estén, así que es seguro correrlo en cada despliegue.
+    Base.metadata.create_all(bind=engine)
+
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:5174",
-        "http://127.0.0.1:5174",
-    ],
+    allow_origins=settings.allowed_origins_list,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

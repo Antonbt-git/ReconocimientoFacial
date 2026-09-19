@@ -38,7 +38,7 @@ export default function ProbabilityChart({
         <XAxis
           dataKey="similitud"
           tick={{ fontSize: 11, fill: "var(--text-muted)" }}
-          tickFormatter={(valor) => `${valor}%`}
+          tickFormatter={(valor: number) => `${valor}%`}
           label={{
             value: "Similitud",
             position: "insideBottom",
@@ -51,12 +51,12 @@ export default function ProbabilityChart({
         <YAxis
           domain={[0, 100]}
           tick={{ fontSize: 11, fill: "var(--text-muted)" }}
-          tickFormatter={(valor) => `${valor}%`}
+          tickFormatter={(valor: number) => `${valor}%`}
         />
 
         <Tooltip
           formatter={(valor: number) => [`${valor}%`, "Probabilidad"]}
-          labelFormatter={(valor) => `Similitud ${valor}%`}
+          labelFormatter={(valor: number) => `Similitud ${valor}%`}
           contentStyle={{
             background: "var(--surface)",
             border: "1px solid var(--border)",

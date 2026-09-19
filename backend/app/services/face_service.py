@@ -5,17 +5,28 @@ import cv2
 import numpy as np
 from insightface.app import FaceAnalysis
 
+from app.core.config import settings
+
 
 class FaceService:
 
     def __init__(self):
-        # Solo se cargan los submodelos de detección y reconocimiento.
-        # El paquete "buffalo_l" completo también incluye modelos de
-        # género/edad y landmarks 2D/3D que no se usan en este proyecto
-        # y que, cargados en memoria, son la causa principal de que el
-        # servicio exceda los 512Mi del plan gratuito de Render.
+        # "buffalo_l" pesa ~281MB de descarga y, junto al resto del
+        # proceso (FastAPI, OpenCV, onnxruntime), excede los 512Mi del
+        # plan gratuito de Render incluso antes de terminar de cargar
+        # (el crash ocurre justo tras descargar el zip completo, sin
+        # importar qué submodelos se usen después). "buffalo_sc" es un
+        # paquete de detección + reconocimiento mucho más liviano
+        # (~16MB) pensado para entornos con poca memoria/CPU.
+        #
+        # IMPORTANTE: al cambiar de paquete cambia también el modelo de
+        # reconocimiento (y el tamaño del embedding que genera). Los
+        # rostros ya registrados con "buffalo_l" quedan incompatibles
+        # y deben volver a registrarse; `compare_embeddings` lo detecta
+        # y lanza un error explícito en vez de comparar embeddings de
+        # tamaños distintos.
         self.model = FaceAnalysis(
-            name="buffalo_l",
+            name=settings.INSIGHTFACE_MODEL_PACK,
             allowed_modules=["detection", "recognition"]
         )
 

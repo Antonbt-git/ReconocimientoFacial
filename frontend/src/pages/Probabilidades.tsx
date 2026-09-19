@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import { api } from "../services/api";
+import ProbabilityChart from "../components/ProbabilityChart";
+import type { CalibrationPoint } from "../types/facial";
 
 interface ProbabilityStats {
   total_reconocimientos: number;
@@ -52,6 +54,9 @@ export default function Probabilidades() {
   const [prediccion, setPrediccion] = useState<PredictionResult | null>(null);
   const [calculando, setCalculando] = useState(false);
 
+  const [curva, setCurva] = useState<CalibrationPoint[]>([]);
+  const [umbralCurva, setUmbralCurva] = useState(0.75);
+
   useEffect(() => {
     const cargarEstadisticas = async () => {
       try {
@@ -70,20 +75,35 @@ export default function Probabilidades() {
       }
     };
 
-    const cargarMetricas = async () => {
-      try {
-        const response = await api.get<ModelMetrics>("/modelos/metricas");
-
-        setMetricas(response.data);
-      } catch {
-        // El modelo aún no ha sido entrenado (404): no es un error a mostrar.
-        setMetricas(null);
-      }
-    };
-
     void cargarEstadisticas();
     void cargarMetricas();
+    void cargarCurva();
   }, []);
+
+  const cargarMetricas = async () => {
+    try {
+      const response = await api.get<ModelMetrics>("/modelos/metricas");
+
+      setMetricas(response.data);
+    } catch {
+      // El modelo aún no ha sido entrenado (404): no es un error a mostrar.
+      setMetricas(null);
+    }
+  };
+
+  const cargarCurva = async () => {
+    try {
+      const response = await api.get<{
+        puntos: CalibrationPoint[];
+        umbral: number;
+      }>("/probabilidades/curva");
+
+      setCurva(response.data.puntos);
+      setUmbralCurva(response.data.umbral);
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   const entrenarModelo = async () => {
     try {
@@ -93,6 +113,7 @@ export default function Probabilidades() {
       const response = await api.post<ModelMetrics>("/modelos/entrenar");
 
       setMetricas(response.data);
+      void cargarCurva();
     } catch (error) {
       console.error(error);
 
@@ -316,6 +337,22 @@ export default function Probabilidades() {
             : "Entrenar modelo"}
         </button>
       </div>
+
+      {/* Curva de calibración — relación similitud → probabilidad (sección 6) */}
+      {curva.length > 0 && (
+        <div className="dashboard-card">
+          <span className="eyebrow">CURVA DE CALIBRACIÓN</span>
+          <h2>Similitud vs. probabilidad calibrada</h2>
+
+          <p style={{ color: "var(--text-soft)", fontSize: 12, marginTop: 4, marginBottom: 8 }}>
+            {metricas
+              ? "Salida del modelo entrenado a lo largo de todo el rango de similitud."
+              : "Aún no hay modelo entrenado: se muestra la heurística de respaldo."}
+          </p>
+
+          <ProbabilityChart data={curva} umbral={umbralCurva} />
+        </div>
+      )}
 
       {/* Simulador de calibración — ejemplo de la sección 6 del documento */}
       <div className="dashboard-card">

@@ -5,11 +5,12 @@ from sqlalchemy.orm import Session
 from app.database.connection import get_db
 from app.models.recognition_log_model import RecognitionLog
 from app.schemas.probability_schema import (
+    CalibrationCurveResponse,
     PredictionRequest,
     PredictionResponse,
     ProbabilityStatsResponse,
 )
-from app.services.probability_service import probability_service
+from app.services.probability_service import DEFAULT_THRESHOLD, probability_service
 
 
 router = APIRouter(
@@ -106,5 +107,19 @@ def calcular_prediccion(
         similitud=payload.similitud,
         distancia=distancia,
         probabilidad_calibrada=probabilidad,
+        modelo_entrenado=probability_service.is_trained()
+    )
+
+
+@router.get(
+    "/curva",
+    response_model=CalibrationCurveResponse
+)
+def obtener_curva_calibracion():
+    puntos = probability_service.get_calibration_curve()
+
+    return CalibrationCurveResponse(
+        puntos=puntos,
+        umbral=DEFAULT_THRESHOLD,
         modelo_entrenado=probability_service.is_trained()
     )

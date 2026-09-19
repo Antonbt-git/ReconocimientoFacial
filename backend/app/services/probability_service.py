@@ -183,5 +183,18 @@ class ProbabilityService:
     def is_trained(self) -> bool:
         return self.model is not None
 
+    def get_calibration_curve(self, pasos: int = 50) -> list[dict[str, float]]:
+        """Muestrea la función de calibración a lo largo de todo el rango
+        de similitud, para poder graficarla (sección 6 del documento:
+        relación entre similitud y probabilidad calibrada)."""
+
+        return [
+            {
+                "similitud": float(similitud),
+                "probabilidad": self.predict(float(similitud)),
+            }
+            for similitud in np.linspace(0, 1, pasos)
+        ]
+
 
 probability_service = ProbabilityService()
