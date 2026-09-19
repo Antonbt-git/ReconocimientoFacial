@@ -9,13 +9,19 @@ from insightface.app import FaceAnalysis
 class FaceService:
 
     def __init__(self):
+        # Solo se cargan los submodelos de detección y reconocimiento.
+        # El paquete "buffalo_l" completo también incluye modelos de
+        # género/edad y landmarks 2D/3D que no se usan en este proyecto
+        # y que, cargados en memoria, son la causa principal de que el
+        # servicio exceda los 512Mi del plan gratuito de Render.
         self.model = FaceAnalysis(
-            name="buffalo_l"
+            name="buffalo_l",
+            allowed_modules=["detection", "recognition"]
         )
 
         self.model.prepare(
             ctx_id=0,
-            det_size=(640, 640)
+            det_size=(320, 320)
         )
 
     def image_to_array(

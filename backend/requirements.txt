@@ -10,3 +10,5 @@ insightface
 opencv-python
 numpy
 python-multipart
+scikit-learn
+joblib

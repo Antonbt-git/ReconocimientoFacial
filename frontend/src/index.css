@@ -1128,6 +1128,167 @@ button {
   color: var(--success);
 }
 
+/* METRICS (usado en Dashboard y Probabilidades) */
+
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+
+  margin-top: 20px;
+}
+
+.metrics-grid div {
+  padding: 13px;
+
+  border: 1px solid var(--border);
+  border-radius: 10px;
+
+  background: var(--surface-soft);
+}
+
+.metrics-grid span,
+.metrics-grid strong {
+  display: block;
+}
+
+.metrics-grid span {
+  color: var(--text-muted);
+  font-size: 10px;
+}
+
+.metrics-grid strong {
+  margin-top: 4px;
+  font-size: 16px;
+}
+
+/* MODELO / ENTRENAMIENTO */
+
+.model-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+
+  padding: 5px 10px;
+
+  border-radius: 999px;
+
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.model-status::before {
+  content: "";
+
+  width: 6px;
+  height: 6px;
+
+  border-radius: 50%;
+}
+
+.model-status.trained {
+  background: var(--success-soft);
+  color: var(--success);
+}
+
+.model-status.trained::before {
+  background: var(--success);
+}
+
+.model-status.untrained {
+  background: var(--warning-soft);
+  color: var(--warning);
+}
+
+.model-status.untrained::before {
+  background: var(--warning);
+}
+
+.model-note {
+  margin-top: 14px;
+
+  color: var(--text-muted);
+  font-size: 11px;
+  line-height: 1.6;
+}
+
+.confusion-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+
+  margin-top: 20px;
+}
+
+.confusion-cell {
+  padding: 13px;
+
+  border-radius: 10px;
+  text-align: center;
+}
+
+.confusion-cell span,
+.confusion-cell strong {
+  display: block;
+}
+
+.confusion-cell strong {
+  font-size: 20px;
+}
+
+.confusion-cell span {
+  margin-top: 4px;
+  font-size: 10px;
+}
+
+.confusion-cell.positive {
+  background: var(--success-soft);
+  color: var(--success);
+}
+
+.confusion-cell.negative {
+  background: var(--danger);
+  color: white;
+}
+
+.simulator-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(280px, 0.85fr);
+  gap: 18px;
+}
+
+.range-value {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+
+  margin-bottom: 8px;
+
+  font-size: 12px;
+  color: var(--text-soft);
+}
+
+.range-value strong {
+  color: var(--text);
+  font-size: 14px;
+}
+
+input[type="range"] {
+  width: 100%;
+  accent-color: var(--primary);
+}
+
+.empty-simulator {
+  min-height: 280px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  text-align: center;
+}
+
 /* TABLE */
 
 .table-card {
@@ -1219,6 +1380,15 @@ td {
   }
 
   .bottom-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .metrics-grid,
+  .confusion-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .simulator-layout {
     grid-template-columns: 1fr;
   }
 }

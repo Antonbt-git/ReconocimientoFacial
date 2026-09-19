@@ -7,6 +7,7 @@ from app.models.face_embedding_model import FaceEmbedding
 from app.models.persona_model import Persona
 from app.models.recognition_log_model import RecognitionLog
 from app.services.face_service import face_service
+from app.services.probability_service import probability_service
 
 DEFAULT_THRESHOLD = 0.75
 
@@ -85,13 +86,23 @@ def reconocer_persona(
         >= threshold
     )
 
+    # ---------------------------------------------------------
+    # 4. Calibrar la probabilidad con el modelo de ML
+    #    (sección 6 y 7 del documento técnico)
+    # ---------------------------------------------------------
+
+    probabilidad_calibrada = probability_service.predict(
+        similitud=mejor_resultado["similitud"],
+        distancia=mejor_resultado["distancia"]
+    )
+
     log = RecognitionLog(
         persona_id=mejor_resultado["persona_id"] if coincide else None,
         similitud=mejor_resultado["similitud"],
         distancia=mejor_resultado["distancia"],
         umbral=threshold,
         coincide=coincide,
-        probabilidad_calibrada=None
+        probabilidad_calibrada=probabilidad_calibrada
     )
     db.add(log)
     db.commit()
@@ -113,5 +124,6 @@ def reconocer_persona(
         "distancia": mejor_resultado["distancia"],
         "umbral": threshold,
         "coincide": coincide,
+        "probabilidad_calibrada": probabilidad_calibrada,
         "det_score": result["det_score"]
     }
