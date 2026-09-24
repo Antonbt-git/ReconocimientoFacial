@@ -12,9 +12,11 @@ class RecognitionHistoryResponse(BaseModel):
     umbral: float
     coincide: bool
     probabilidad_calibrada: float | None
+    calidad_imagen: str | None
+    iluminacion: str | None
+    verificado: bool
     created_at: datetime
 
     model_config = ConfigDict(
         from_attributes=True
     )
-

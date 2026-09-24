@@ -22,6 +22,7 @@ interface ConfusionMatrix {
 
 interface ModelMetrics {
   algoritmo: string;
+  variables: string[];
   muestras_totales: number;
   muestras_evaluacion: number;
   evaluado_con_conjunto_independiente: boolean;
@@ -246,9 +247,11 @@ export default function Probabilidades() {
 
         <p style={{ color: "var(--text-soft)", fontSize: 12, marginTop: 4 }}>
           Un clasificador de {metricas?.algoritmo ?? "Regresión Logística"} se
-          entrena sobre el historial de reconocimientos (similitud y
-          distancia) para estimar una probabilidad calibrada de coincidencia,
-          en lugar de usar la similitud cruda como si fuera una probabilidad.
+          entrena sobre reconocimientos <strong>verificados</strong> desde el
+          Historial o el módulo de Reconocimiento (similitud, distancia,
+          calidad de imagen e iluminación) para estimar una probabilidad
+          calibrada de coincidencia, en lugar de usar la similitud cruda como
+          si fuera una probabilidad.
         </p>
 
         {metricas && (
@@ -314,8 +317,9 @@ export default function Probabilidades() {
         {!metricas && (
           <p className="model-note">
             Aún no se ha entrenado ningún modelo. Se necesitan al menos 6
-            reconocimientos registrados, con ejemplos de coincidencia y de no
-            coincidencia, para poder entrenarlo.
+            reconocimientos <strong>verificados</strong> (con ejemplos
+            correctos e incorrectos), confirmándolos desde Reconocimiento o
+            desde el Historial.
           </p>
         )}
 

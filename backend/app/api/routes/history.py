@@ -31,6 +31,9 @@ def get_historial(
             RecognitionLog.umbral,
             RecognitionLog.coincide,
             RecognitionLog.probabilidad_calibrada,
+            RecognitionLog.calidad_imagen,
+            RecognitionLog.iluminacion,
+            RecognitionLog.verificado,
             RecognitionLog.created_at,
         )
         .outerjoin(

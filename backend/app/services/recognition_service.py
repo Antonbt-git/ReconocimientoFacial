@@ -93,7 +93,9 @@ def reconocer_persona(
 
     probabilidad_calibrada = probability_service.predict(
         similitud=mejor_resultado["similitud"],
-        distancia=mejor_resultado["distancia"]
+        distancia=mejor_resultado["distancia"],
+        calidad_imagen=result["calidad_imagen"],
+        iluminacion=result["iluminacion"]
     )
 
     log = RecognitionLog(
@@ -102,7 +104,9 @@ def reconocer_persona(
         distancia=mejor_resultado["distancia"],
         umbral=threshold,
         coincide=coincide,
-        probabilidad_calibrada=probabilidad_calibrada
+        probabilidad_calibrada=probabilidad_calibrada,
+        calidad_imagen=result["calidad_imagen"],
+        iluminacion=result["iluminacion"]
     )
     db.add(log)
     db.commit()
@@ -110,6 +114,7 @@ def reconocer_persona(
 
     return {
         "success": True,
+        "log_id": log.id,
         "persona_id": (
             mejor_resultado["persona_id"]
             if coincide
@@ -125,5 +130,7 @@ def reconocer_persona(
         "umbral": threshold,
         "coincide": coincide,
         "probabilidad_calibrada": probabilidad_calibrada,
+        "calidad_imagen": result["calidad_imagen"],
+        "iluminacion": result["iluminacion"],
         "det_score": result["det_score"]
     }

@@ -64,6 +64,64 @@ class FaceService:
 
         return self.model.get(image)
 
+    def estimar_calidad(
+        self,
+        image: np.ndarray,
+        face: Any
+    ) -> dict:
+        """Estima iluminación y nitidez a partir del recorte facial.
+
+        Estas son justamente las variables "calidad_imagen" e
+        "iluminacion" que pide la sección 7 del documento técnico como
+        entrada del modelo de Machine Learning, además de la similitud.
+        Se calculan de forma automática para no depender de que un
+        operador las tipee a mano en cada reconocimiento.
+        """
+
+        x1, y1, x2, y2 = [
+            int(coordenada)
+            for coordenada in face.bbox
+        ]
+
+        x1, y1 = max(x1, 0), max(y1, 0)
+        x2 = min(x2, image.shape[1])
+        y2 = min(y2, image.shape[0])
+
+        recorte = image[y1:y2, x1:x2]
+
+        if recorte.size == 0:
+            recorte = image
+
+        gris = cv2.cvtColor(recorte, cv2.COLOR_BGR2GRAY)
+
+        # Iluminación: brillo promedio del recorte facial (0-255).
+        brillo = float(gris.mean())
+
+        if brillo < 80:
+            iluminacion = "Baja"
+        elif brillo < 170:
+            iluminacion = "Media"
+        else:
+            iluminacion = "Alta"
+
+        # Calidad/nitidez: varianza del laplaciano. Valores bajos
+        # indican una imagen borrosa o con poco detalle.
+        nitidez = float(cv2.Laplacian(gris, cv2.CV_64F).var())
+
+        if nitidez < 50:
+            calidad_imagen = "Baja"
+        elif nitidez < 150:
+            calidad_imagen = "Media"
+        else:
+            calidad_imagen = "Alta"
+
+        return {
+            "calidad_imagen": calidad_imagen,
+            "iluminacion": iluminacion,
+            "brillo": brillo,
+            "nitidez": nitidez,
+        }
+
     def generate_embedding(
         self,
         image_bytes: bytes
@@ -96,6 +154,8 @@ class FaceService:
                 "No se pudo generar el embedding facial"
             )
 
+        calidad = self.estimar_calidad(image, face)
+
         return {
             "embedding": embedding.astype(
                 np.float32
@@ -105,7 +165,10 @@ class FaceService:
                 face.det_score
             ),
 
-            "bbox": face.bbox.tolist()
+            "bbox": face.bbox.tolist(),
+
+            "calidad_imagen": calidad["calidad_imagen"],
+            "iluminacion": calidad["iluminacion"],
         }
 
     def compare_embeddings(

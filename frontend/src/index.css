@@ -1289,6 +1289,24 @@ input[type="range"] {
   text-align: center;
 }
 
+.verification-actions {
+  margin-top: 18px;
+  padding-top: 16px;
+
+  border-top: 1px solid var(--border);
+}
+
+.verification-buttons {
+  display: flex;
+  gap: 10px;
+
+  margin-top: 10px;
+}
+
+.verification-buttons button {
+  flex: 1;
+}
+
 /* TABLE */
 
 .table-card {
@@ -1304,6 +1322,11 @@ input[type="range"] {
 }
 
 .table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.table-container {
   width: 100%;
   overflow-x: auto;
 }

@@ -100,7 +100,9 @@ def calcular_prediccion(
 
     probabilidad = probability_service.predict(
         similitud=payload.similitud,
-        distancia=payload.distancia
+        distancia=payload.distancia,
+        calidad_imagen=payload.calidad_imagen,
+        iluminacion=payload.iluminacion
     )
 
     return PredictionResponse(

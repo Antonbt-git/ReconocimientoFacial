@@ -2,8 +2,13 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 from app.database.connection import get_db
-from app.schemas.probability_schema import ModelMetricsResponse
+from app.schemas.probability_schema import (
+    ModelMetricsResponse,
+    TrainingRecordResponse,
+    VerificacionCreate,
+)
 from app.services.probability_service import probability_service
+from app.services.training_record_service import verificar_reconocimiento
 
 
 router = APIRouter(
@@ -44,3 +49,27 @@ def obtener_metricas():
         )
 
     return metricas
+
+
+@router.post(
+    "/verificaciones",
+    response_model=TrainingRecordResponse,
+    status_code=201
+)
+def crear_verificacion(
+    payload: VerificacionCreate,
+    db: Session = Depends(get_db)
+):
+    try:
+        registro = verificar_reconocimiento(
+            db,
+            log_id=payload.log_id,
+            resultado_real=payload.resultado_real
+        )
+    except ValueError as error:
+        raise HTTPException(
+            status_code=400,
+            detail=str(error)
+        )
+
+    return registro

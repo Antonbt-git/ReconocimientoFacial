@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from sqlalchemy import Boolean, DateTime, Float, ForeignKey, Integer
+from sqlalchemy import Boolean, DateTime, Float, ForeignKey, Integer, String
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.database.connection import Base
@@ -43,6 +43,29 @@ class RecognitionLog(Base):
     probabilidad_calibrada: Mapped[float | None] = mapped_column(
         Float,
         nullable=True
+    )
+
+    # Variables estimadas automáticamente a partir de la imagen
+    # (sección 7 del documento técnico), usadas como entrada del
+    # modelo de ML y, una vez verificadas por un operador, copiadas a
+    # "ml_training_records" para reentrenar el modelo.
+    calidad_imagen: Mapped[str | None] = mapped_column(
+        String(20),
+        nullable=True
+    )
+
+    iluminacion: Mapped[str | None] = mapped_column(
+        String(20),
+        nullable=True
+    )
+
+    # Indica si un operador ya confirmó/corrigió este resultado y se
+    # generó su correspondiente registro de entrenamiento etiquetado,
+    # para no duplicarlo si se verifica dos veces.
+    verificado: Mapped[bool] = mapped_column(
+        Boolean,
+        default=False,
+        nullable=False
     )
 
     created_at: Mapped[datetime] = mapped_column(

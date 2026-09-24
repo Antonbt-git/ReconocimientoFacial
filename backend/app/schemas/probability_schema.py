@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 
 class ProbabilityStatsResponse(BaseModel):
@@ -14,6 +14,8 @@ class ProbabilityStatsResponse(BaseModel):
 class PredictionRequest(BaseModel):
     similitud: float = Field(..., ge=0, le=1)
     distancia: float | None = Field(None, ge=0, le=1)
+    calidad_imagen: str | None = None
+    iluminacion: str | None = None
 
 
 class PredictionResponse(BaseModel):
@@ -43,6 +45,7 @@ class ConfusionMatrix(BaseModel):
 
 class ModelMetricsResponse(BaseModel):
     algoritmo: str
+    variables: list[str]
     muestras_totales: int
     muestras_evaluacion: int
     evaluado_con_conjunto_independiente: bool
@@ -53,3 +56,21 @@ class ModelMetricsResponse(BaseModel):
     tasa_falsos_negativos: float
     matriz_confusion: ConfusionMatrix
     entrenado_en: str
+
+
+class VerificacionCreate(BaseModel):
+    log_id: int
+    resultado_real: bool
+
+
+class TrainingRecordResponse(BaseModel):
+    id: int
+    similitud: float
+    distancia: float | None
+    calidad_imagen: str
+    iluminacion: str
+    resultado_real: bool
+
+    model_config = ConfigDict(
+        from_attributes=True
+    )
