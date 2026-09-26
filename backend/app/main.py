@@ -4,6 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 import app.models  # noqa: F401 — registra todos los modelos en Base.metadata
 from app.api.routes.health import router as health_router
 from app.api.routes.history import router as history_router
+from app.api.routes.login import router as login_router
 from app.api.routes.models import router as models_router
 from app.api.routes.personas import router as personas_router
 from app.api.routes.probabilities import router as probabilities_router
@@ -38,6 +39,7 @@ app.add_middleware(
 
 app.include_router(personas_router)
 app.include_router(recognition_router)
+app.include_router(login_router)
 app.include_router(health_router)
 app.include_router(history_router)
 app.include_router(probabilities_router)

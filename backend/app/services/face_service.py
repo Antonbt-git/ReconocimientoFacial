@@ -57,6 +57,43 @@ class FaceService:
 
         return image
 
+    def aplicar_filtro_iluminacion(
+        self,
+        image: np.ndarray
+    ) -> np.ndarray:
+        """
+        Normaliza el contraste/iluminación de la imagen antes de la
+        detección facial mediante CLAHE (Contrast Limited Adaptive
+        Histogram Equalization) aplicado sobre el canal de luminancia
+        (L de LAB). Esto es lo que pide el punto de "iluminación" del
+        documento: ayuda a que el reconocimiento funcione en
+        condiciones de poca luz, contraluz o sombras marcadas, sin
+        alterar los colores originales de la imagen.
+        """
+
+        lab = cv2.cvtColor(
+            image,
+            cv2.COLOR_BGR2LAB
+        )
+
+        canal_l, canal_a, canal_b = cv2.split(lab)
+
+        clahe = cv2.createCLAHE(
+            clipLimit=2.5,
+            tileGridSize=(8, 8)
+        )
+
+        canal_l_realzado = clahe.apply(canal_l)
+
+        lab_realzado = cv2.merge(
+            (canal_l_realzado, canal_a, canal_b)
+        )
+
+        return cv2.cvtColor(
+            lab_realzado,
+            cv2.COLOR_LAB2BGR
+        )
+
     def detect_faces(
         self,
         image: np.ndarray
@@ -131,13 +168,28 @@ class FaceService:
             image_bytes
         )
 
-        faces = self.detect_faces(
+        # Primero se intenta detectar sobre una versión con el
+        # contraste/iluminación normalizados (más robusta ante poca
+        # luz o contraluz). Si por algún motivo no detecta nada, se
+        # reintenta con la imagen original sin filtrar.
+        imagen_realzada = self.aplicar_filtro_iluminacion(
             image
         )
 
+        faces = self.detect_faces(
+            imagen_realzada
+        )
+
+        if len(faces) == 0:
+            faces = self.detect_faces(
+                image
+            )
+
         if len(faces) == 0:
             raise ValueError(
-                "No se detectó ningún rostro"
+                "No se detectó ningún rostro. Verifica que haya "
+                "buena iluminación y que el rostro esté centrado "
+                "frente a la cámara."
             )
 
         if len(faces) > 1:
@@ -154,6 +206,9 @@ class FaceService:
                 "No se pudo generar el embedding facial"
             )
 
+        # La calidad/iluminación se mide siempre sobre la imagen
+        # original (sin el filtro), para que refleje la condición
+        # real de captura y sirva como dato honesto de entrenamiento.
         calidad = self.estimar_calidad(image, face)
 
         return {

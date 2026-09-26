@@ -54,6 +54,14 @@ export default function Sidebar({
             Reconocimiento
           </button>
 
+          <button
+            className={pagina === "login-facial" ? "nav-item active" : "nav-item"}
+            onClick={() => navegar("login-facial")}
+          >
+            <span>⚿</span>
+            Login Facial
+          </button>
+
           <p className="nav-title">GESTIÓN</p>
 
           <button

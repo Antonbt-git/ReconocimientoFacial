@@ -5,6 +5,7 @@ import { api } from "../services/api";
 interface PersonaResponse {
   id: number;
   nombre: string;
+  dni: string | null;
   email: string | null;
   activo: boolean;
   created_at: string;
@@ -19,6 +20,7 @@ interface EmbeddingResponse {
 
 export default function RegistroFacial() {
   const [nombre, setNombre] = useState("");
+  const [dni, setDni] = useState("");
   const [email, setEmail] = useState("");
 
   const [persona, setPersona] =
@@ -42,6 +44,11 @@ export default function RegistroFacial() {
       return;
     }
 
+    if (!/^\d{8,12}$/.test(dni.trim())) {
+      setError("El DNI debe tener entre 8 y 12 dígitos numéricos.");
+      return;
+    }
+
     try {
       setError(null);
       setEmbedding(null);
@@ -51,6 +58,7 @@ export default function RegistroFacial() {
         "/personas",
         {
           nombre: nombre.trim(),
+          dni: dni.trim(),
           email: email.trim() || null,
         }
       );
@@ -113,6 +121,7 @@ export default function RegistroFacial() {
 
   const reiniciarRegistro = () => {
     setNombre("");
+    setDni("");
     setEmail("");
     setPersona(null);
     setEmbedding(null);
@@ -162,6 +171,25 @@ export default function RegistroFacial() {
               value={nombre}
               onChange={(event) =>
                 setNombre(event.target.value)
+              }
+              disabled={!!persona}
+            />
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="dni">
+              DNI
+            </label>
+
+            <input
+              id="dni"
+              type="text"
+              inputMode="numeric"
+              maxLength={12}
+              placeholder="Ingrese el DNI"
+              value={dni}
+              onChange={(event) =>
+                setDni(event.target.value.replace(/\D/g, ""))
               }
               disabled={!!persona}
             />

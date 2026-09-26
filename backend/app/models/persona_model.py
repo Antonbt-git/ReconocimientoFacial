@@ -19,6 +19,12 @@ class Persona(Base):
         nullable=False
     )
 
+    dni: Mapped[str | None] = mapped_column(
+        String(15),
+        unique=True,
+        nullable=True
+    )
+
     email: Mapped[str | None] = mapped_column(
         String(150),
         unique=True,

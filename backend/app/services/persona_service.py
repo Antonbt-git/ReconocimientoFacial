@@ -12,6 +12,7 @@ def crear_persona(
 
     persona = Persona(
         nombre=datos.nombre,
+        dni=datos.dni,
         email=datos.email
     )
 
@@ -40,6 +41,19 @@ def obtener_persona(
 ) -> Persona | None:
 
     return db.get(Persona, persona_id)
+
+
+def obtener_persona_por_dni(
+    db: Session,
+    dni: str
+) -> Persona | None:
+
+    resultado = db.execute(
+        select(Persona)
+        .where(Persona.dni == dni.strip())
+    )
+
+    return resultado.scalars().first()
 
 
 def actualizar_persona(

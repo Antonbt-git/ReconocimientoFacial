@@ -4,6 +4,7 @@ import Header from "./components/Header";
 import Dashboard from "./pages/Dashboard";
 import RegistroFacial from "./pages/RegistroFacial";
 import Reconocimiento from "./pages/Reconocimiento";
+import LoginFacial from "./pages/LoginFacial";
 import Probabilidades from "./pages/Probabilidades";
 import Historial from "./pages/Historial";
 
@@ -18,6 +19,9 @@ export default function App() {
 
       case "reconocimiento":
         return <Reconocimiento />;
+
+      case "login-facial":
+        return <LoginFacial />;
 
       case "probabilidades":
         return <Probabilidades />;

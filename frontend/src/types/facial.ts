@@ -23,3 +23,23 @@ export interface CalibrationCurveResponse {
   umbral: number;
   modelo_entrenado: boolean;
 }
+
+export interface PersonaIdentificada {
+  id: number;
+  nombre: string;
+  dni: string | null;
+  email: string | null;
+}
+
+export interface LoginFacialResult {
+  success: boolean;
+  coincide: boolean;
+  persona: PersonaIdentificada | null;
+  similitud: number | null;
+  distancia: number | null;
+  umbral: number;
+  probabilidad_calibrada: number | null;
+  calidad_imagen: string | null;
+  iluminacion: string | null;
+  mensaje: string;
+}

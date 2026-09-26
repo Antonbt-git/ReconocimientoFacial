@@ -1552,3 +1552,42 @@ td {
   }
 }
 
+
+/* ---------------------------------------------------------
+   LOGIN FACIAL: consejos de iluminación y estado en vivo
+   --------------------------------------------------------- */
+
+.lighting-tips {
+  margin: 12px 0 0;
+  padding-left: 18px;
+
+  color: var(--text-soft);
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+.lighting-badge {
+  padding: 6px 12px;
+
+  border-radius: 100px;
+
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.lighting-badge.lighting-buena {
+  background: var(--success-soft);
+  color: var(--success);
+}
+
+.lighting-badge.lighting-baja,
+.lighting-badge.lighting-alta {
+  background: var(--warning-soft);
+  color: var(--warning);
+}
+
+.lighting-warning {
+  border-left: 3px solid var(--warning);
+  padding-left: 10px;
+}
